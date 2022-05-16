@@ -2,8 +2,51 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.sys.dao.UserInfoDao">
 
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.sys.pojo.vo.UserVO">
+        <id column="uid" property="uid" />
+        <result column="uname" property="uname" />
+        <collection property="objectInfosList" ofType="com.example.sys.entity.ObjectInfo">
+            <id column="oid" property="id" />
+            <result column="oname" property="name" />
+        </collection>
+
+    </resultMap>
+
+    <resultMap id="UserTeaObjVOResultMap" type="com.example.sys.pojo.vo.UserTeaObjVO">
+        <id column="uid" property="uid" />
+        <result column="uname" property="uname" />
+        <collection property="objectInfosList" ofType="com.example.sys.entity.ObjectInfo">
+            <id column="oid" property="id" />
+            <result column="oname" property="name" />
+        </collection>
+        <collection property="teacherInfosList" ofType="com.example.sys.entity.TeacherInfo">
+            <result column="tname" property="name" />
+        </collection>
+
+    </resultMap>
+
     <select id="getList" resultType="com.example.sys.entity.UserInfo">
         select * from user_info
     </select>
+
+    <select id="getUserVOList" resultMap="BaseResultMap">
+        select t1.id uid, t1.name uname ,t3.id oid ,t3.name oname
+from user_info t1
+left join user_object t2 on t2.uid=t1.id
+left join object_info t3 on t2.object_id=t3.id
+    </select>
+
+    <select id="UserTeaObjVO" resultMap="UserTeaObjVOResultMap">
+        select t1.name uname ,t3.id oid ,t3.name oname,t5.name tname
+from user_info t1
+left join user_object t2 on t2.uid=t1.id
+left join object_info t3 on t2.object_id=t3.id
+left join teacher_object t4 on t3.id=t4.object_id
+left join teacher_info t5 on t5.id=t4.teacher_id
+    </select>
+
+
 
 </mapper>

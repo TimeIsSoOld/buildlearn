@@ -1,4 +1,4 @@
-package com.example.sys;
+package com.example.sys.controller;
 
 public class UserInfoController {
 }
