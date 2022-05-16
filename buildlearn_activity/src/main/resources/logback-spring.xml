@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 动态修改日志级别: jconsole连接后, MBean里面的ch.qos.logback.classic的操作setLoggerLevel, 动态修改日志级别 -->
+    <jmxConfigurator/>
+
+    <springProfile name="local">
+        <property name="LOG_PATH" value="D:/logs"/>
+    </springProfile>
+
+    <springProfile name="dev">
+        <property name="LOG_PATH" value="/home/tpm/logs"/>
+    </springProfile>
+
+    <!-- 测试环境 -->
+    <springProfile name="test">
+        <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+        <property name="LOG_PATH" value="/home/tpm/logs"/>
+    </springProfile>
+
+    <!-- 生产环境 -->
+    <springProfile name="pro">
+        <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径。对应线上的地址-->
+        <property name="LOG_PATH" value="home/logs"/>
+    </springProfile>
+    <!-- SpringBoot的日志基础配置, 及变量设置 -->
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+    <springProperty scope="context" name="appname" source="spring.application.name" defaultValue="activity"/>
+    <springProperty scope="context" name="LOG_PATH" source="LOG_PATH" defaultValue="/home/tpm/logs"/>
+    <springProperty scope="context" name="LOG_PATH" source="LOG_PATH" defaultValue="/home/tpm/logs"/>
+    <springProperty scope="context" name="pattern" source="pattern"
+                    defaultValue="%d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${PID:- } --- [%15.15t] %-40.40logger{39} : %m%n"/>
+
+    <!-- INFO级别日志: 保留60天, 文件最大为100MB, 滚动压缩为zip -->
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/${appname}/${appname}.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${appname}/${appname}.%d.%i.log.zip</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ERROR级别日志 -->
+    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${LOG_PATH}/${appname}/err-${appname}.log</File>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${appname}/err-${appname}.%d.%i.log.zip</fileNamePattern>
+            <maxHistory>60</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 自定义部分类的日志级别 -->
+    <!-- 后置处理器检查, 总报部分依赖的bean(feign调用的)没有被全部后置处理器处理, 我又不能做什么, 因此设置为警告级别-->
+    <logger name="org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker"
+            level="WARN"/>
+    <logger name="com.alibaba.nacos.client.naming" additivity="false">
+        <level value="warn"/>
+        <!--<appender-ref ref="FileAppender" />-->
+        <!-- <appender-ref ref="ConsoleAppender" />-->
+    </logger>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <!--        <Encoding>UTF-8</Encoding>-->
+        <!--
+        日志输出格式：%d表示日期时间，%thread表示线程名，%-5level：级别从左显示5个字符宽度
+        %logger{50} 表示logger名字最长50个字符，否则按照句点分割。 %msg：日志消息，%n是换行符
+        -->
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%level] - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <!-- 日志级别 -->
+    <root level="info">
+        <appender-ref ref="file"/>
+        <appender-ref ref="error"/>
+    </root>
+    <!--
+    ELK停用
+    <appender name="stash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>47.98.43.198:4569</destination>
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+    <appender name="async" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="stash"/>
+    </appender>
+    <root level="info">
+        <appender-ref ref="async"/>
+    </root>
+    -->
+</configuration>

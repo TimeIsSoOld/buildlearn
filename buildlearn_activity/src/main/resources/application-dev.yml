@@ -1,0 +1,48 @@
+server:
+  port: 8019
+  servlet:
+    context-path: /activity
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://43.154.195.135:3306/db?useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: yjn
+    password: 123456
+
+
+
+
+
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  global-config:
+    # 逻辑删除配置
+    db-config:
+      # 删除前
+      logic-not-delete-value: 1
+      # 删除后
+      logic-delete-value: 0
+
+
+
+
+
+#超时时间配置
+ribbon:
+  ReadTimeout: 300000
+  ConnectTimeout: 300000
+
+
+logging:
+  config: classpath:logback-spring.xml
+

@@ -6,6 +6,7 @@
 	<modules>
 		<module>buildlearn_demo</module>
 		<module>buildlearn_admin</module>
+		<module>buildlearn_activity</module>
 	</modules>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
