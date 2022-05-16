@@ -3,7 +3,7 @@
 <mapper namespace="com.example.sys.dao.UserInfoDao">
 
     <select id="getList" resultType="com.example.sys.entity.UserInfo">
-        select * from user_info;
+        select * from user_info
     </select>
 
 </mapper>

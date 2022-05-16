@@ -5,6 +5,7 @@ import com.example.sys.dao.UserInfoDao;
 import com.example.sys.entity.UserInfo;
 import com.example.sys.service.UserInfoService;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,13 +19,14 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoDao, UserInfo> impl
 
 
 
+
     @Override
-    public List<UserInfo> getList() {
+    public PageInfo<UserInfo> getList() {
 
-        PageHelper.startPage(1,50);
+        PageHelper.startPage(2,1);
 
 
-        return this.list();
+        return new PageInfo<>(this.userInfoDao.getList());
 
     }
 }
